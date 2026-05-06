@@ -159,3 +159,7 @@ cython_debug/
 *.env           # dotenv environment variables
 .Spotlight-V100
 .Trashes
+# Custom Ignores
+health_env/
+workers.pem
+worker.tar.gz

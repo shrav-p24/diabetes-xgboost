@@ -13,6 +13,7 @@ from pathlib import Path
 from scheduler.dataset import AIScheduler
 from disease_model.model_utils import DiabetesClassifier
 import warnings
+file_lock = threading.Lock() # Add this global lock
 
 warnings.filterwarnings("ignore")
 
@@ -22,7 +23,7 @@ scaler_path = base_dir / 'worker/scaler.pkl'
 
 
 app = Flask(__name__)
-WORKER_IPS = [ '34.71.56.20', '35.189.104.124']
+WORKER_IPS = [ '51.20.4.11', '13.49.68.86']
 WORKER_PORT = 5000
 OPTIMAL_SCHEDULER_MODEL = 'vm_selector_model.pth'
 SCHEDULER_SCALER = 'scheduler_scaler.pkl'
@@ -36,7 +37,7 @@ scheduler_scaler = joblib.load(SCHEDULER_SCALER)
 in_channels = 21
 out_channels = 2
 predictor_model = DiabetesClassifier(in_channels, out_channels)
-predictor_model.load_state_dict(torch.load(model_path))
+predictor_model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
 predictor_model.eval()
 predictor_scaler = joblib.load(scaler_path)
 
@@ -110,18 +111,19 @@ def get_worker(features):
 
 def save_optimal_worker_stats(system, stats):
     file = 'worker_system_metric_stats.json'
-    system_metric = []
-    if os.path.exists(file):  # load stats file if it exists
-        with open(file, 'r') as f:
-            system_metric = json.load(f)
-    system_metric.append({
-        'system': system,
-        'stats': stats
-    })  # appending new stats
+    with file_lock:
+        system_metric = []
+        if os.path.exists(file):  # load stats file if it exists
+            with open(file, 'r') as f:
+                system_metric = json.load(f)
+        system_metric.append({
+            'system': system,
+            'stats': stats
+        })  # appending new stats
 
-    with open(file, 'w') as f:
-        json.dump(system_metric, f, indent=4)
-    print(f"All System stats updated in {file}")
+        with open(file, 'w') as f:
+            json.dump(system_metric, f, indent=4)
+        print(f"All System stats updated in {file}")
 
 # save system stats from broker
 def save_broker_stats():
@@ -140,12 +142,16 @@ def save_temporal_stats(system, model_execution_time, total_execution_time, late
     
     file = 'temporal_stats.json'
     system_metric = []
-    if os.path.exists(file): # load stats file if it exists
-        with open(file, 'r') as f:
-            system_metric = json.load(f)
-    system_metric.append(time_stats) # append new stats
-    with open(file, 'w') as f:
-        json.dump(system_metric, f, indent=4)
+    with file_lock:
+        if os.path.exists(file): # load stats file if it exists
+            with open(file, 'r') as f:
+                try:
+                    system_metric = json.load(f)
+                except json.JSONDecodeError:
+                    system_metric = []
+        system_metric.append(time_stats) # append new stats
+        with open(file, 'w') as f:
+            json.dump(system_metric, f, indent=4)
     print(f"Updated Temporal Statistics saved in {file}")
 
 # calculate send and received bandwidth of the broker system
@@ -208,31 +214,37 @@ def broker_diabetes_prediction(features):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    if request.method == 'POST':  # get features that user has input on webpage
-        start_time = time.time() # start time of the operation
+    if request.method == 'POST':
+        start_time = time.time()
         try:
+            # Check if the data is coming as JSON (from Simulator) or Form (from Web Browser)
+            if request.is_json:
+                data = request.get_json()
+            else:
+                data = request.form
+
             features = [
-                int(request.form['HighBP']),
-                int(request.form['HighChol']),
-                int(request.form['CholCheck']),
-                int(request.form['BMI']),
-                int(request.form['Smoker']),
-                int(request.form['Stroke']),
-                int(request.form['HeartDiseaseorAttack']),
-                int(request.form['PhysActivity']),
-                int(request.form['Fruits']),
-                int(request.form['Veggies']),
-                int(request.form['HvyAlcoholConsump']),
-                int(request.form['AnyHealthcare']),
-                int(request.form['NoDocbcCost']),
-                int(request.form['GenHlth']),
-                int(request.form['MentHlth']),
-                int(request.form['PhysHlth']),
-                int(request.form['DiffWalk']),
-                int(request.form['Sex']),
-                int(request.form['Age']),
-                int(request.form['Education']),
-                int(request.form['Income'])
+                int(data['HighBP']),
+                int(data['HighChol']),
+                int(data['CholCheck']),
+                int(data['BMI']),
+                int(data['Smoker']),
+                int(data['Stroke']),
+                int(data['HeartDiseaseorAttack']),
+                int(data['PhysActivity']),
+                int(data['Fruits']),
+                int(data['Veggies']),
+                int(data['HvyAlcoholConsump']),
+                int(data['AnyHealthcare']),
+                int(data['NoDocbcCost']),
+                int(data['GenHlth']),
+                int(data['MentHlth']),
+                int(data['PhysHlth']),
+                int(data['DiffWalk']),
+                int(data['Sex']),
+                int(data['Age']),
+                int(data['Education']),
+                int(data['Income'])
             ]
 
             latency = time.time() - start_time
@@ -255,6 +267,7 @@ def index():
 
             except Exception as e:  # in case of exception with VMs request is handled by the broker
                 print(f"Error with Workers: {e}, using broker for prediction")
+                vm_index = 'broker'
                 prediction = broker_diabetes_prediction(features)
                 model_execution_time = time.time() - start_time - latency
                 if prediction == 0:
@@ -269,6 +282,12 @@ def index():
                                  args=('broker', model_execution_time, total_execution_time, latency),
                                  daemon=True).start()
                 threading.Thread(target=save_broker_stats, daemon=True).start()
+
+            if request.is_json:
+                from flask import jsonify
+                worker_ip = WORKER_IPS[vm_index - 1] if isinstance(vm_index, int) else 'broker'
+                pred_val = prediction['prediction'] if isinstance(prediction, dict) else prediction
+                return jsonify({'worker_ip': worker_ip, 'prediction': pred_val})
             return render_template('result.html', result_message=result_message)  # return result to user
 
         except Exception as e:
