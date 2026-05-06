@@ -23,7 +23,11 @@ scaler_path = base_dir / 'worker/scaler.pkl'
 
 
 app = Flask(__name__)
-WORKER_IPS = [ '51.20.4.11', '13.49.68.86']
+WORKER_IPS = [
+    ip.strip()
+    for ip in os.environ.get('HEALTHAIOT_WORKER_IPS', '51.20.4.11,13.49.68.86').split(',')
+    if ip.strip()
+]
 WORKER_PORT = 5000
 OPTIMAL_SCHEDULER_MODEL = 'vm_selector_model.pth'
 SCHEDULER_SCALER = 'scheduler_scaler.pkl'
@@ -73,6 +77,11 @@ def predict_optimal_worker(combined_stats):
 
 # combine combine_worker_stats and predict_optimal_worker functions and fetch the optimal VM stats
 def get_optimal_worker():
+    if len(WORKER_IPS) == 1:
+        worker_stats = fetch_worker_stats(WORKER_IPS[0])
+        if worker_stats:
+            save_optimal_worker_stats('worker_1', worker_stats)
+        return WORKER_IPS[0], 1
 
     # fetch system metric for all the workers and save as an ordered list
     stats_list = [fetch_worker_stats(vm_ip) for vm_ip in WORKER_IPS]

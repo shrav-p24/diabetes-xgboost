@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="540" viewBox="0 0 920 540">
+<rect width="100%" height="100%" fill="white"/>
+<style>text{font-family:Arial,sans-serif;fill:#111827}.title{font-size:22px;font-weight:700}.axis{font-size:12px}.legend{font-size:13px}.label{font-size:12px}</style>
+<text x="460.0" y="34" text-anchor="middle" class="title">Average End-to-End Time Breakdown</text>
+<text x="22" y="257.5" transform="rotate(-90 22 257.5)" class="axis">milliseconds</text>
+<line x1="80" y1="445.0" x2="890" y2="445.0" stroke="#e5e7eb"/>
+<text x="70" y="449.0" text-anchor="end" class="axis">0.0</text>
+<line x1="80" y1="370.0" x2="890" y2="370.0" stroke="#e5e7eb"/>
+<text x="70" y="374.0" text-anchor="end" class="axis">69.8</text>
+<line x1="80" y1="295.0" x2="890" y2="295.0" stroke="#e5e7eb"/>
+<text x="70" y="299.0" text-anchor="end" class="axis">139.7</text>
+<line x1="80" y1="220.0" x2="890" y2="220.0" stroke="#e5e7eb"/>
+<text x="70" y="224.0" text-anchor="end" class="axis">209.5</text>
+<line x1="80" y1="145.0" x2="890" y2="145.0" stroke="#e5e7eb"/>
+<text x="70" y="149.0" text-anchor="end" class="axis">279.4</text>
+<line x1="80" y1="70.0" x2="890" y2="70.0" stroke="#e5e7eb"/>
+<text x="70" y="74.0" text-anchor="end" class="axis">349.2</text>
+<line x1="80" y1="445" x2="890" y2="445" stroke="#374151"/>
+<line x1="80" y1="70" x2="80" y2="445" stroke="#374151"/>
+<rect x="113.0" y="443.6" width="81.0" height="1.4" fill="#2563eb"/>
+<text x="153.5" y="438.6" text-anchor="middle" class="label">1.3</text>
+<rect x="518.0" y="443.4" width="81.0" height="1.6" fill="#2563eb"/>
+<text x="558.5" y="438.4" text-anchor="middle" class="label">1.4</text>
+<rect x="207.2" y="430.9" width="81.0" height="14.1" fill="#f97316"/>
+<text x="247.7" y="425.9" text-anchor="middle" class="label">13.1</text>
+<rect x="612.2" y="432.0" width="81.0" height="13.0" fill="#f97316"/>
+<text x="652.7" y="427.0" text-anchor="middle" class="label">12.1</text>
+<rect x="301.3" y="297.4" width="81.0" height="147.6" fill="#16a34a"/>
+<text x="341.8" y="292.4" text-anchor="middle" class="label">137.4</text>
+<rect x="706.3" y="127.2" width="81.0" height="317.8" fill="#16a34a"/>
+<text x="746.8" y="122.2" text-anchor="middle" class="label">296.0</text>
+<text x="282.5" y="488" text-anchor="middle" class="axis">1 worker</text>
+<text x="687.5" y="488" text-anchor="middle" class="axis">2 workers</text>
+<rect x="80" y="515" width="16" height="16" fill="#2563eb"/>
+<text x="103" y="528" class="legend">Input handling latency</text>
+<rect x="255" y="515" width="16" height="16" fill="#f97316"/>
+<text x="278" y="528" class="legend">Model inference</text>
+<rect x="430" y="515" width="16" height="16" fill="#16a34a"/>
+<text x="453" y="528" class="legend">Scheduler + network overhead</text>
+</svg>

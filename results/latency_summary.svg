@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="540" viewBox="0 0 920 540">
+<rect width="100%" height="100%" fill="white"/>
+<style>text{font-family:Arial,sans-serif;fill:#111827}.title{font-size:22px;font-weight:700}.axis{font-size:12px}.legend{font-size:13px}.label{font-size:12px}</style>
+<text x="460.0" y="34" text-anchor="middle" class="title">Cloud Scheduler Latency Summary</text>
+<text x="22" y="257.5" transform="rotate(-90 22 257.5)" class="axis">milliseconds</text>
+<line x1="80" y1="445.0" x2="890" y2="445.0" stroke="#e5e7eb"/>
+<text x="70" y="449.0" text-anchor="end" class="axis">0.0</text>
+<line x1="80" y1="370.0" x2="890" y2="370.0" stroke="#e5e7eb"/>
+<text x="70" y="374.0" text-anchor="end" class="axis">103.5</text>
+<line x1="80" y1="295.0" x2="890" y2="295.0" stroke="#e5e7eb"/>
+<text x="70" y="299.0" text-anchor="end" class="axis">207.0</text>
+<line x1="80" y1="220.0" x2="890" y2="220.0" stroke="#e5e7eb"/>
+<text x="70" y="224.0" text-anchor="end" class="axis">310.4</text>
+<line x1="80" y1="145.0" x2="890" y2="145.0" stroke="#e5e7eb"/>
+<text x="70" y="149.0" text-anchor="end" class="axis">413.9</text>
+<line x1="80" y1="70.0" x2="890" y2="70.0" stroke="#e5e7eb"/>
+<text x="70" y="74.0" text-anchor="end" class="axis">517.4</text>
+<line x1="80" y1="445" x2="890" y2="445" stroke="#374151"/>
+<line x1="80" y1="70" x2="80" y2="445" stroke="#374151"/>
+<rect x="123.0" y="334.9" width="105.5" height="110.1" fill="#2563eb"/>
+<text x="175.7" y="329.9" text-anchor="middle" class="label">151.9</text>
+<rect x="528.0" y="220.7" width="105.5" height="224.3" fill="#2563eb"/>
+<text x="580.7" y="215.7" text-anchor="middle" class="label">309.5</text>
+<rect x="245.7" y="127.2" width="105.5" height="317.8" fill="#f97316"/>
+<text x="298.5" y="122.2" text-anchor="middle" class="label">438.5</text>
+<rect x="650.7" y="261.1" width="105.5" height="183.9" fill="#f97316"/>
+<text x="703.5" y="256.1" text-anchor="middle" class="label">253.7</text>
+<text x="282.5" y="488" text-anchor="middle" class="axis">1 worker</text>
+<text x="687.5" y="488" text-anchor="middle" class="axis">2 workers</text>
+<rect x="80" y="515" width="16" height="16" fill="#2563eb"/>
+<text x="103" y="528" class="legend">Average total</text>
+<rect x="255" y="515" width="16" height="16" fill="#f97316"/>
+<text x="278" y="528" class="legend">P95 total</text>
+</svg>
